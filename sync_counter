@@ -1,29 +1,50 @@
-module sync_counter(input wire clk,input wire reset,output reg[2:0]count)
-always@(posedge clk)
-begin
- If(reset==0)
-  count<=3'b000;
-else
- count<=count+1'b1;
-end
+3-Bit Synchronous Counter (Behavioral Model) 
+ 
+module sync_counter_3bit1 ( 
+    input wire clk,            // Clock input 
+    input wire reset,         // Active-low synchronous reset 
+    output reg [2:0] count    // 3-bit counter output 
+); 
+ 
+    // Behavioral description using sequential logic 
+    always @(posedge clk) 
+ begin 
+          if (reset==0) 
+                 count <= 3'b000;       // Reset counter to 0 on next clock edge 
+          else 
+                 count <= count + 1'b1; // Increment count 
+     end 
+ 
+endmodule 
+ 
+ 
+//testbench 
+ 
+module tb_sync_3bit; 
+    reg clk; 
+    reg reset; 
+    wire [2:0] count; 
+ 
+    // Instantiate the counter 
+    sync_counter_3bit1 uut (clk,reset,count); 
+         
+    // Clock generation: 10 ns period 
+    initial clk = 0; 
+    always #5 clk = ~clk;  // Toggle every 5 ns 
+ 
+    // Test sequence 
+    initial 
+    begin 
+     $dumpfile("sync_counter_3bit1.vcd"); 
+            $dumpvars(1); 
+         // Apply initial reset 
+         reset = 0; 
+          #10;                  // Hold reset for 10 ns 
+          reset = 1;           // Release reset 
+ 
+         // Let it count for a while 
+         #80; 
+        
+        $finish; 
+    end 
 endmodule
-module tb_sync_counter;
-  reg clk;
-  reg reset;
-  wire [2:0] count;
-sync_counter uut(clk,reset,count);
-initial clk=0;
-always #5 clk=~clk;
-initial
-begin
-  $dumpfile("sync_counter.vcd");
-  $dumpvars(1);
-reset=0;
-#10;
-reset=1;
-#80;
- $finish;
-end
-endmodule
-
-    
