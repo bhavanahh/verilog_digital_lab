@@ -1,0 +1,156 @@
+4:1 MUX using continuous assignment with logic operator 
+ 
+module m41(output wire Y, input wire I0,I1,I2,I3,S0,S1); 
+ assign Y=(S1&S0&I3) | (S1&~S0&I2) | (~S1&S0&I1) | (~S1&~S0&I0); 
+endmodule 
+ 
+ 
+//Testbench 
+ 
+module tb_m41; 
+ 
+    reg I0, I1, I2, I3; 
+    reg S0, S1; 
+    wire Y; 
+ 
+    m41 uut (Y,I0,I1,I2,I3,S0,S1); 
+         
+    initial 
+       begin 
+       $dumpfile("m41.vcd"); 
+       $dumpvars(1); 
+ 
+        I0=1;I1=0;I2=1;I3=0;  //sample input 1010 
+        //{I0, I1, I2, I3} = 4'b1010; 
+ 
+        S1 = 0; S0 = 0;  #10; 
+        S1 = 0; S0 = 1;  #10; 
+        S1 = 1; S0 = 0;  #10; 
+        S1 = 1; S0 = 1;  #10; 
+ 
+       $finish; 
+    end 
+endmodule 
+ 
+ 
+4:1 MUX using conditional operator 
+ 
+odule mux41_con1(output wire y, input wire I0,I1,I2,I3,input  wire [1:0]  sel); 
+ 
+ assign y = (sel == 2'b00) ? I0 : 
+               (sel == 2'b01) ? I1 : 
+               (sel == 2'b10) ? I2 :I3; 
+endmodule 
+ 
+ 
+// TESTBENCH 
+ 
+module tb_mux4to1; 
+ 
+    reg  d0, d1, d2, d3; 
+    reg  [1:0] s; 
+    wire y; 
+ 
+    mux41_con1 uut (y,d0,d1,d2,d3,s); 
+         
+    initial 
+    begin 
+        $dumpfile("mux41_con1.vcd"); 
+        $dumpvars(1); 
+ 
+        // initialize sample inputs 
+        d0 = 1; 
+        d1 = 0; 
+        d2 = 0; 
+        d3 = 1; 
+ 
+        s = 2'b00; #10; 
+        s = 2'b01; #10; 
+        s = 2'b10; #10; 
+        s = 2'b11; #10; 
+ 
+        $finish; 
+    end 
+ 
+endmodule 
+ 
+ 
+1:4 DEMUX USING LOGIC OPERATOR 
+ 
+module demux1to4(output wire F0,F1,F2,F3 ,        // 4 outputs 
+    input  wire  din,        // single data input 
+    input  wire [1:0] sel   // 2-bit select 
+     
+); 
+ 
+    assign F0 = din & ~sel[1] & ~sel[0]; 
+    assign F1 = din & ~sel[1] &  sel[0]; 
+    assign F2 = din &  sel[1] & ~sel[0]; 
+    assign F3 = din &  sel[1] &  sel[0]; 
+ 
+endmodule 
+ 
+ 
+//TESTBENCH 
+ 
+module tb_demux1to4; 
+ 
+    reg din; 
+    reg [1:0] sel; 
+    wire y0,y1,y2,y3; 
+ 
+    // Instantiate the DUT (Device Under Test) 
+    demux1to4 uut (y0,y1,y2,y3,din,sel); 
+        
+    initial 
+     begin 
+        $dumpfile("demux1to4.vcd"); 
+        $dumpvars(1); 
+ 
+        din = 1'b1; 
+        sel = 2'b00; #10; 
+        sel = 2'b01; #10; 
+        sel = 2'b10; #10; 
+        sel = 2'b11; #10; 
+ 
+        $finish; 
+    end 
+ 
+endmodule 
+ 
+ 
+1:4 DEMUX USING CONDITIONAL OPERATOR 
+ 
+module demux1to4_cond(output wire F0,F1,F2,F3,input  wire din,input  wire [1:0] sel); 
+ 
+    assign F0 = (sel == 2'b00) ? din : 1'b0; 
+    assign F1 = (sel == 2'b01) ? din : 1'b0; 
+    assign F2 = (sel == 2'b10) ? din : 1'b0; 
+    assign F3 = (sel == 2'b11) ? din : 1'b0; 
+ 
+endmodule 
+ 
+//Testbench 
+module tb_demux1to4_cond; 
+ 
+    reg din; 
+    reg [1:0] sel; 
+    wire y0,y1,y2,y3; 
+ 
+    // Instantiate the DUT (Device Under Test) 
+    demux1to4_cond uut (y0,y1,y2,y3,din,sel); 
+                
+    initial 
+    begin 
+        $dumpfile("demux1to4_cond.vcd"); 
+        $dumpvars(1); 
+ 
+        din = 1'b1; 
+        sel = 2'b00; #10; 
+        sel = 2'b01; #10; 
+        sel = 2'b10; #10; 
+        sel = 2'b11; #10; 
+ 
+        $finish; 
+    end 
+endmodule 
