@@ -1,0 +1,29 @@
+module sync_counter(input wire clk,input wire reset,output reg[2:0]count)
+always@(posedge clk)
+begin
+ If(reset==0)
+  count<=3'b000;
+else
+ count<=count+1'b1;
+end
+endmodule
+module tb_sync_counter;
+  reg clk;
+  reg reset;
+  wire [2:0] count;
+sync_counter uut(clk,reset,count);
+initial clk=0;
+always #5 clk=~clk;
+initial
+begin
+  $dumpfile("sync_counter.vcd");
+  $dumpvars(1);
+reset=0;
+#10;
+reset=1;
+#80;
+ $finish;
+end
+endmodule
+
+    
