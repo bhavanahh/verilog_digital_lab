@@ -1,0 +1,19 @@
+mudule dff_behav(input wire D ,input wire clk,output reg Q);
+ always(@posedge clk)
+Q<=D;
+endmodule
+
+module tb_dff_beh;
+ reg D,clk;
+wire Q;
+ always #5clk=~clk;
+initial
+begin
+$dumpfile("dff_behav.vcd");
+$dumpvars(1);
+clk=0;D=0;
+D=1;#10;
+D=0;#10;
+$finish;
+end
+endmodule
